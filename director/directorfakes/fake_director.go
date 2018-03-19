@@ -2225,7 +2225,7 @@ func (fake *FakeDirector) DiffConfigReturnsOnCall(i int, result1 director.Config
 	}{result1, result2}
 }
 
-func (fake *FakeDirector) DiffConfigByID(fromID string, toID string) (director.ConfigDiff, error) {
+func (fake *FakeDirector) DiffConfigByID(fromID string, fromContent []byte, toID string, toContent []byte) (director.ConfigDiff, error) {
 	fake.diffConfigByIDMutex.Lock()
 	ret, specificReturn := fake.diffConfigByIDReturnsOnCall[len(fake.diffConfigByIDArgsForCall)]
 	fake.diffConfigByIDArgsForCall = append(fake.diffConfigByIDArgsForCall, struct {

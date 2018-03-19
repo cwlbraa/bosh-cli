@@ -10,6 +10,7 @@ import (
 	boshdir "github.com/cloudfoundry/bosh-cli/director"
 	fakedir "github.com/cloudfoundry/bosh-cli/director/directorfakes"
 	fakeui "github.com/cloudfoundry/bosh-cli/ui/fakes"
+	boshtbl "github.com/cloudfoundry/bosh-cli/ui/table"
 )
 
 var _ = Describe("DiffConfigCmd", func() {
@@ -32,10 +33,8 @@ var _ = Describe("DiffConfigCmd", func() {
 
 		BeforeEach(func() {
 			opts = DiffConfigOpts{
-				Args: DiffConfigArgs{
-					FromID: "1",
-					ToID:   "2",
-				},
+				FromID: "1",
+				ToID:   "2",
 			}
 		})
 
@@ -70,6 +69,30 @@ var _ = Describe("DiffConfigCmd", func() {
 			director.DiffConfigByIDReturns(expectedDiff, nil)
 			err := act()
 			Expect(err).ToNot(HaveOccurred())
+			Expect(ui.Table).To(Equal(
+				boshtbl.Table{
+					Content: "",
+
+					Header: []boshtbl.Header{
+						boshtbl.NewHeader("From ID"),
+						boshtbl.NewHeader("To ID"),
+						boshtbl.NewHeader("Diff"),
+					},
+
+					Rows: [][]boshtbl.Value{
+						{
+							boshtbl.NewValueString("1"),
+							boshtbl.NewValueString("2"),
+							boshtbl.NewValueString(""),
+						},
+					},
+
+					Notes: []string{},
+
+					FillFirstColumn: true,
+
+					Transpose: true,
+				}))
 			Expect(director.DiffConfigByIDCallCount()).To(Equal(1))
 			Expect(ui.Said).To(ContainElement("  some line that stayed\n"))
 			Expect(ui.Said).To(ContainElement("+ some line that was added\n"))
